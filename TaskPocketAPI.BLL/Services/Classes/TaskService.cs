@@ -51,16 +51,15 @@ namespace TaskPocket.BLL.Services.Classes
                 Description = t.Description,
                 DueDate = t.DueDate,
                 IsCompleted = t.IsCompleted,
-                OwnerName = !string.IsNullOrEmpty(t.Owner?.UserName) ? t.Owner.FullName : "Unknown",
-                SharedWithUsers = t.SharedWithUsers
-                    .Where(s => s.User != null)             // avoid null User
-                    .Select(s => s.User.UserName)
-                    .ToList()
-            }).ToList();
+                OwnerName = !string.IsNullOrEmpty(t.Owner?.UserName) ? t.Owner.UserName : "Unknown",
+                SharedWithUsers = t.SharedWithUsers?
+                .Where(s => s.User != null)
+                .Select(s => s.User.UserName)
+                .ToList() ?? new List<string>()
+                }).ToList();
 
             return taskDtos;
         }
-
 
 
         public async Task<TaskResponse?> GetTaskByIdAsync(int taskId)

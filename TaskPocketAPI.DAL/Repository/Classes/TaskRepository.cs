@@ -27,6 +27,7 @@ namespace TaskPocket.DAL.Repository.Classes
             var query = _context.Tasks
             .Include(t => t.Owner)
             .Include(t => t.SharedWithUsers)
+                .ThenInclude(s => s.User)
             .Where(t =>
                 t.OwnerId == userId ||
                 t.SharedWithUsers.Any(u => u.UserId == userId)
