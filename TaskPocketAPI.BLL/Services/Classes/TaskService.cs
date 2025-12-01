@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using TaskPocket.BLL.Services.Interfaces;
@@ -10,6 +11,7 @@ using TaskPocket.DAL.DTO.Requests;
 using TaskPocket.DAL.DTO.Responses;
 using TaskPocket.DAL.Models;
 using TaskPocket.DAL.Models.Enum;
+using TaskPocket.DAL.Repository.Classes;
 using TaskPocket.DAL.Repository.Interfaces;
 
 namespace TaskPocket.BLL.Services.Classes
@@ -191,8 +193,27 @@ namespace TaskPocket.BLL.Services.Classes
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
+        public async Task<string> GetTasksAsTextAsync(string ownerId)
+        {
+            var tasks = await _repository.GetAllTasksForUserAsync(ownerId, TaskFilter.All);
 
+            var sb = new StringBuilder();
+            sb.AppendLine("Your Tasks:");
 
+            foreach (var task in tasks)
+            {
+                sb.AppendLine($"Title: {task.Title}");
+                sb.AppendLine($"Description: {task.Description}");
+                sb.AppendLine($"DueDate: {task.DueDate}");
+                sb.AppendLine($"IsCompleted: {task.IsCompleted}");
+                sb.AppendLine("------------------------");
+            }
+
+            if (!tasks.Any())
+                sb.AppendLine("No tasks found.");
+
+            return sb.ToString();
+        }
 
     }
 }

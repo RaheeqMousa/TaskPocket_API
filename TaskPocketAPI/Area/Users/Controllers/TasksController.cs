@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -65,5 +66,23 @@ namespace TaskPocketAPI.PL.Area.Tasks.Controllers
             await _taskService.ShareTaskWithUser(taskId, userId);
             return Ok();
         }
+
+
+
+        [HttpGet("download-tasks")]
+        [Authorize]
+        public async Task<IActionResult> DownloadTasks()
+        {
+            string ownerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(ownerId))
+                return Unauthorized();
+
+            // Call the service to get tasks as text
+            string fileContent = await _taskService.GetTasksAsTextAsync(ownerId);
+
+            var fileBytes = Encoding.UTF8.GetBytes(fileContent);
+            return File(fileBytes, "text/plain", "UserTasks.txt");
+        }
+
     }
 }
