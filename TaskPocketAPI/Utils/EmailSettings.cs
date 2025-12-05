@@ -18,14 +18,13 @@ namespace TaskPocket.PL.Utils
 
         public Task SendEmailAsync(string email, string subject, string messageHtml)
         {
-            var fromAddress = _configuration["EmailSettings:FromAddress"];
-            var pass= _configuration["EmailSettings:Password"];
+            var pass= _configuration["EMAIL_SECRET"];
 
             var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("raheeqmousa00@gmail.com", "najt wosl idfc kvqu")
+                Credentials = new NetworkCredential("raheeqmousa00@gmail.com", pass)
             };
 
             return client.SendMailAsync(
